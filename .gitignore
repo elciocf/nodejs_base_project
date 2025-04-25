@@ -1,0 +1,13 @@
+node_modules
+.env.production
+dist
+src/shared/certificates/chave-privada-sem-senha.key
+src/shared/certificates/chave-privada.key
+src/shared/certificates/CertCICOM_2425.pem
+tmp
+files
+dist.zip
+ziptoftp.bat
+updateonline.bat
+yarn.lock
+http/userAdm

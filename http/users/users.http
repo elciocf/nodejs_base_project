@@ -1,0 +1,14 @@
+
+// signin
+POST {{$dotenv BASEURL}}/signin
+Content-Type: {{$dotenv CONTENTTYPE}}
+
+{
+	"email": "email",
+	"senha": "senha",	
+}
+
+// list
+GET {{$dotenv BASEURL}}/users/list
+Content-Type: {{$dotenv CONTENTTYPE}}
+Authorization: Bearer {{$dotenv TOKEN}}
