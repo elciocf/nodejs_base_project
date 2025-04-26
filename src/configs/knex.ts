@@ -8,7 +8,7 @@ const config: { [key: string]: Knex.Config } = {
         client: "mysql",
         connection: {
             host: "localhost",
-            database: "database_name",
+            database: "kibird",
             user: "root",
             password: "root123",
             port: 3306,

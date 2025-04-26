@@ -4,6 +4,8 @@ dist
 src/shared/certificates/chave-privada-sem-senha.key
 src/shared/certificates/chave-privada.key
 src/shared/certificates/CertCICOM_2425.pem
+src/configs/knex.ts
+src/configs/auth.ts
 tmp
 files
 dist.zip
@@ -11,3 +13,4 @@ ziptoftp.bat
 updateonline.bat
 yarn.lock
 http/userAdm
+knexfiles.ts
