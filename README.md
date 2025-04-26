@@ -9,6 +9,12 @@ Este repositório contém a base de uma API construída com as seguintes tecnolo
 - **[Prettier](https://prettier.io/)**: Ferramenta para formatação de código.
 - **[TSC Paths](https://github.com/dividab/tscpaths)**: Suporte para paths configurados no `tsconfig.json`.
 
+Estão inclusos:
+- `migrations`: do knex, para criar as tabelas de usuário, tipo de usuário e refresh_tokens.
+- `Rotas`: signin, refresh_token
+- `JSONWebToken`: Geração de tokens, refresh_tokens.
+- `middleware`: Para validar a autenticação
+
 ## Scripts Disponíveis
 
 No arquivo `package.json`, você encontrará os seguintes scripts úteis:
