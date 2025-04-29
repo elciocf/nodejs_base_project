@@ -1,6 +1,6 @@
 # API Base
 
-Este repositório contém a base de uma API construída com as seguintes tecnologias e ferramentas:
+Este repositório contém a base de uma API, com padrão SOLID, construída com as seguintes tecnologias e ferramentas:
 
 - **[Express](https://expressjs.com/)**: Framework minimalista para Node.js.
 - **[TypeScript](https://www.typescriptlang.org/)**: Superset do JavaScript que adiciona tipagem estática.
@@ -8,6 +8,9 @@ Este repositório contém a base de uma API construída com as seguintes tecnolo
 - **[ESLint](https://eslint.org/)**: Ferramenta para análise de código e padronização.
 - **[Prettier](https://prettier.io/)**: Ferramenta para formatação de código.
 - **[TSC Paths](https://github.com/dividab/tscpaths)**: Suporte para paths configurados no `tsconfig.json`.
+- **[tsyringe](https://github.com/microsoft/tsyringe)**: Biblioteca para injeção de dependência em TypeScript.
+
+
 
 Estão inclusos:
 - `migrations`: do knex, para criar as tabelas de usuário, tipo de usuário e refresh_tokens.
@@ -31,15 +34,45 @@ No arquivo `package.json`, você encontrará os seguintes scripts úteis:
     npm install
     ```
 
-2. Para executar em modo desenvolvimento
+2. Para executar o projeto é necessário que você tenha uma instância do mysql/mariadb
+   Ajuste os arquivos para mirar na sua instância do banco de dados: 
+   - knex.ts (na raiz do projeto)
+   - Knex.ts (na pasta /src/configs)
+
+3. Defina os hashs de token e refresh_token
+   - auth.ts (na pasta /src/configs)
+
+3. Execute as migrations:
+    ```bash
+    npm run knex -- migrate:latest
+    ```
+4. Execute os seeds iniciais:
+    ```bash
+    npm run initial-seeds
+    ```  
+5. Inicie o servidor em modo de desenvolvimento:
     ```bash
     npm run dev
-    ```
+    ```  
+
+## Testes
+
+Para testar as rotas da API, você pode utilizar as seguintes ferramentas:
+
+1. **[Insomnia](https://insomnia.rest/)**: Uma ferramenta gráfica para testar APIs REST. Basta importar os endpoints manualmente ou criar um workspace para organizar suas requisições.
+
+2. **Extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)**: Utilize os arquivos da pasta `/http` para realizar testes diretamente no Visual Studio Code. Esses arquivos contêm exemplos de requisições HTTP que podem ser executados com a extensão.
+
+### Como usar a extensão REST Client:
+
+- Certifique-se de que a extensão está instalada no VSCode.
+- Abra qualquer arquivo `.http` ou `.rest` na pasta `/http`.
+- Clique no botão "Send Request" que aparece acima de cada requisição ou use o atalho `Ctrl+Alt+R` (ou `Cmd+Alt+R` no macOS).
+
 
 Notas:
 - Por padrão o servidor está configurado para porta 3000.
-- Necessário informar os dados de conexão no arquivo `knex.ts` na pasta raiz e na pasta `/src/configs/knex.ts`.
-- Ajuste o hash no arquivo `auth.ts`.
+
 
 
 ## Extensões Recomendadas para o VSCode
@@ -48,9 +81,8 @@ Para facilitar o desenvolvimento, instale as seguintes extensões no Visual Stud
 
 - **[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)**: Integração do ESLint com o VSCode.
 - **[Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)**: Formatação de código com Prettier.
-- **[Path Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.path-intellisense)**: Autocompletar caminhos de arquivos.
-- **[DotENV](https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv)**: Suporte para arquivos `.env`.
-- **[TypeScript Hero](https://marketplace.visualstudio.com/items?itemName=rbbit.typescript-hero)**: Ferramentas adicionais para TypeScript.
+- **[REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)**: Permite testar requisições HTTP diretamente no VSCode.
+
 
 Certifique-se de configurar o `settings.json` do VSCode para habilitar o formatador padrão e o ESLint:
 
