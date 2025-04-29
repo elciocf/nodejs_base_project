@@ -1,54 +1,34 @@
-// eslint-disable-next-line import/no-import-module-exports
-import type { Knex } from "knex";
+/* eslint-disable import/no-import-module-exports */
 
-// Update with your config settings.
+import knex from "knex";
 
-const config: { [key: string]: Knex.Config } = {
-    development: {
-        client: "mysql",
-        connection: {
-            host: "localhost",
-            database: "kibird",
-            user: "root",
-            password: "root123",
-            port: 3306,
-            timezone: "UTC",
-        },
-        pool: {
-            min: 2,
-            max: 10,
-        },
-        migrations: {
-            tableName: "migrations",
-            directory: "./src/shared/knex/migrations",
-        },
-        seeds: {
-            directory: "./src/shared/knex/seeds",
-        },
+const db = knex({
+    client: "mysql",
+    connection: {
+        host: "localhost",
+        database: "autoserv",
+        user: "root",
+        password: "root123",
+        port: 3306,
+        timezone: "UTC",
     },
-
-    production: {
-        client: "mysql",
-        connection: {
-            host: "localhost",
-            database: "database_name",
-            user: "root",
-            password: "root123",
-            port: 3306,
-            timezone: "UTC",
+    pool: {
+        afterCreate(connection, callback) {
+            // eslint-disable-next-line func-names, @typescript-eslint/no-explicit-any
+            connection.query(`SET time_zone = "-03:00";`, function (err: any) {
+                callback(err, connection);
+            });
         },
-        pool: {
-            min: 2,
-            max: 10,
-        },
-        migrations: {
-            tableName: "migrations",
-            directory: "./src/shared/knex/migrations",
-        },
-        seeds: {
-            directory: "./src/shared/knex/seeds",
-        },
+        min: 2,
+        max: 10,
     },
-};
+    migrations: {
+        tableName: "migrations",
+        directory: "./src/shared/knex/migrations",
+    },
+    seeds: {
+        directory: "./src/shared/knex/seeds",
+    },
+});
 
-module.exports = config;
+export { db };
