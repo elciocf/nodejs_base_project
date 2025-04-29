@@ -2,9 +2,14 @@ import { Router } from "express";
 
 const usersRoutes = Router();
 
-usersRoutes.get("/list", (req, res) => {
-    // Logic to list users
-    res.send("List of users");
+usersRoutes.post("/list", (req, res) => {
+    // Simulate a database call
+    const users = [
+        { id: 1, name: "John Doe" },
+        { id: 2, name: "Jane Doe" },
+    ];
+
+    return res.status(200).json(users);
 });
 
 export { usersRoutes };

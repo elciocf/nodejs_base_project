@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register -r dotenv/config --inspect --transpile-only --ignore-watch node_modules --respawn --poll src/shared/http/server.ts",
     "production": "pm2 start dist/src/shared/http/server.js --name api-name",
-    "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s . -o ./dist && yarn copy-folder",
+    "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s . -o ./dist",
     "initial-seeds": "ts-node-dev -r tsconfig-paths/register -r dotenv/config --inspect --transpile-only --ignore-watch node_modules --respawn --poll src/shared/knex/seeds/initial-seeds.ts"
   },
   "keywords": [],

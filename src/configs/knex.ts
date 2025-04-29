@@ -6,7 +6,7 @@ const db = knex({
     client: "mysql",
     connection: {
         host: "localhost",
-        database: "autoserv",
+        database: "kibird",
         user: "root",
         password: "root123",
         port: 3306,

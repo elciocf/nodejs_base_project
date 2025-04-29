@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "@shared/containers/index";
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import "express-async-errors";
