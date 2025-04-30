@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
-import { {{entity}} } from "../../entities/{{entity}}";
-import { I{{entity}}Repository } from "../../repositories/I{{entity}}Repository";
+import { {{entity}} } from "@modules/{{module}}/entities/{{modulePascal}}";
+import { I{{entity}}Repository } from "@modules/{{module}}/repositories/I{{modulePascal}}Repository";
 
 interface IRequest {
     {{#each fields}}
@@ -14,10 +14,10 @@ interface IRequest {
 }
 
 @injectable()
-class {{useCaseName}} {
+class {{useCaseNamePascal}}UseCase {
     constructor(
-        @inject("{{entity}}Repository")
-        private {{entityLower}}Repository: I{{entity}}Repository
+        @inject("{{modulePascal}}Repository")
+        private {{entityLower}}Repository: I{{modulePascal}}Repository
     ) {}
 
     async execute(data: IRequest): Promise<{{entity}}> {
@@ -27,4 +27,4 @@ class {{useCaseName}} {
     }
 }
 
-export { {{useCaseName}} };
+export { {{useCaseNamePascal}}UseCase };

@@ -1,7 +1,22 @@
 import { input, select } from "@inquirer/prompts";
+import { exec } from "child_process";
 import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
+
+// Função para rodar o eslint --fix
+function runEslintOnFiles(files: string[]) {
+    // Junta os paths em uma string e executa o comando
+    const cmd = `yarn eslint ${files.map((f) => `"${f}"`).join(" ")} --fix`;
+    exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Erro ao rodar ESLint: ${error.message}`);
+            return;
+        }
+        if (stdout) console.log(stdout);
+        if (stderr) console.error(stderr);
+    });
+}
 
 Handlebars.registerHelper("ifEquals", function ifEquals(arg1, arg2, options) {
     return arg1 === arg2 ? options.fn(this) : options.inverse(this);
@@ -108,6 +123,8 @@ async function main() {
         default: `${useCase}${entity}`,
     });
 
+    const useCaseNamePascal = pascalCase(useCaseName);
+
     let useCaseDir = path.join(moduleDir, "useCases", module.toLowerCase());
     ensureDir(moduleDir);
 
@@ -124,31 +141,45 @@ async function main() {
     }
 
     // --- Escreve arquivos ---
+    const files = [];
 
     // 1. UsesCases
     const useCaseTpl = compileTemplate(`${useCase}UseCase`);
     writeFileIfNotExists(
-        path.join(useCaseDir, `${useCaseName}UseCase.ts`),
+        path.join(useCaseDir, `${useCaseNamePascal}UseCase.ts`),
         useCaseTpl({
+            module,
+            modulePascal: pascalCase(module),
             entity,
             entity_pk: pkField,
             fields,
             entityLower,
+            useCaseName,
+            useCaseNamePascal,
         })
     );
+
+    files.push(path.join(useCaseDir, `${useCaseNamePascal}UseCase.ts`));
 
     // 2. Controller
     const controllerTpl = compileTemplate(`${useCase}Controller`);
     writeFileIfNotExists(
-        path.join(useCaseDir, `${useCaseName}Controller.ts`),
+        path.join(useCaseDir, `${useCaseNamePascal}Controller.ts`),
         controllerTpl({
+            module,
+            modulePascal: pascalCase(module),
+            useCaseNamePascal,
             useCaseName,
             useCaseNameLowerFirst: lowerFirstLetter(useCaseName),
             entityLower,
         })
     );
 
+    files.push(path.join(useCaseDir, `${useCaseNamePascal}Controller.ts`));
+
     console.log("Arquivos criados com sucesso!");
+
+    runEslintOnFiles(files);
 }
 
 main();
