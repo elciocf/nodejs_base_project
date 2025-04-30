@@ -1,0 +1,54 @@
+import { db } from "@configs/knex";
+import { I{{entity}}DTO } from "@modules/{{module}}/dto/I{{entity}}DTO";
+import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
+
+import { I{{entity}}Repository, IList } from "../I{{entity}}Repository";
+
+class {{entity}}Repository implements I{{entity}}Repository {
+    async create(data: I{{entity}}DTO): Promise<{{entity}}> {
+        const [created] = await db("{{table}}").insert(data).returning("*");
+        return created;
+    }
+
+    async update(data: I{{entity}}DTO): Promise<{{entity}}> {
+        const [updated] = await db("{{table}}")
+            .where("{{entity_pk}}", (data as any).{{entity_pk}})
+            .update(data)
+            .returning("*");
+        return updated;
+    }
+
+    async delete({{entity_pk}}: number): Promise<void> {
+        await db("{{table}}").where("{{entity_pk}}", {{entity_pk}}).del();
+    }
+
+    async getByPK({{entity_pk}}: number): Promise<{{entity}}> {
+        const item = await db("{{table}}").where("{{entity_pk}}", {{entity_pk}}).first();
+        return item;
+    }
+
+    async listAll(page: number, limit = 10, order = "asc"): Promise<IList> {
+        const offset = (page - 1) * limit;
+
+        const [countResult] = await db("{{table}}").count("* as count");
+        const count = Number(countResult.count);
+
+        const data = await db("{{table}}")
+            .select("*")
+            .orderBy("{{entity_pk}}", order)
+            .limit(limit)
+            .offset(offset);
+
+        const totalPages = Math.ceil(count / limit);
+
+        return {
+            data,
+            count,
+            limit,
+            page,
+            totalPages,
+        };
+    }
+}
+
+export { {{entity}}Repository };

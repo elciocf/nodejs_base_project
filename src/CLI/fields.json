@@ -1,0 +1,6 @@
+{
+    "cod_token": "string",    
+    "cod_usuario": "string",
+    "refresh_token": "string",
+    "expira_em": "Date"
+}

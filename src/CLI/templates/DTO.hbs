@@ -1,0 +1,12 @@
+interface I{{entity}}DTO {
+{{#each fields}}
+  {{#ifEquals @key ../entity_pk}}
+    {{@key}}?: {{this}};
+  {{else}}
+    {{@key}}: {{this}};
+  {{/ifEquals}}
+{{/each}}
+}
+
+export { I{{entity}}DTO };
+
