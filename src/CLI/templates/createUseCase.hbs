@@ -1,0 +1,30 @@
+import { inject, injectable } from "tsyringe";
+
+import { {{entity}} } from "../../entities/{{entity}}";
+import { I{{entity}}Repository } from "../../repositories/I{{entity}}Repository";
+
+interface IRequest {
+    {{#each fields}}
+    {{#ifEquals @key ../entity_pk}}
+        {{@key}}?: {{this}};
+    {{else}}
+        {{@key}}: {{this}};
+    {{/ifEquals}}
+    {{/each}}    
+}
+
+@injectable()
+class {{useCaseName}} {
+    constructor(
+        @inject("{{entity}}Repository")
+        private {{entityLower}}Repository: I{{entity}}Repository
+    ) {}
+
+    async execute(data: IRequest): Promise<{{entity}}> {
+        
+        const new{{entity}} = await this.{{entityLower}}Repository.create(data);
+        return new{{entity}};
+    }
+}
+
+export { {{useCaseName}} };

@@ -1,4 +1,4 @@
-import { input } from "@inquirer/prompts";
+import { input, select } from "@inquirer/prompts";
 import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
@@ -29,18 +29,33 @@ function writeFileIfNotExists(filename: string, data: string) {
 // --- CLI ---
 async function main() {
     // 1. Pergunta o módulo
-    const module = await input({ message: "Qual o nome do módulo?" });
+    let module = await input({
+        message: "Qual o nome do módulo? <ls - para listar>",
+    });
+
+    // 2. Se o usuário digitar "ls", lista os módulos
+    if (module === "ls") {
+        const modules = fs
+            .readdirSync("src/modules")
+            .filter((file) =>
+                fs.statSync(path.join("src/modules", file)).isDirectory()
+            );
+
+        module = await select({
+            message: "Selecione o módulo",
+            choices: modules,
+        });
+    }
+
     const moduleDir = path.resolve("src/modules/", module);
     ensureDir(moduleDir);
-
-    console.log("moduleDir", moduleDir);
 
     // 2. Pergunta o nome da entidade
     const entity = await input({ message: "Qual o nome da entidade?" });
     const entityPascal = pascalCase(entity);
-    const entityLower = lowerFirstLetter(entity);
-    const entityDir = path.join(moduleDir, entityLower);
-    // const entityDir = moduleDir;
+    // const entityLower = lowerFirstLetter(entity);
+    // const entityDir = path.join(moduleDir, entityLower);
+    const entityDir = moduleDir;
     ensureDir(entityDir);
 
     console.log("entityDir", entityDir);
