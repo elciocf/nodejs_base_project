@@ -30,7 +30,7 @@ class UserTypesRepository implements IUserTypesRepository {
         await db("tipos_usuario").where("cod_tipo_usuario", cod).del();
     }
 
-    async getByCod(cod: number): Promise<UserType> {
+    async getByPK(cod: number): Promise<UserType> {
         const userType = await db("tipos_usuario")
             .where("cod_tipo_usuario", cod)
             .first();

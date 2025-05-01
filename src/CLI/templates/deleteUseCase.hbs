@@ -1,0 +1,44 @@
+import { inject, injectable } from "tsyringe";
+
+import { AppError } from "@shared/errors/AppError";
+
+import { I{{entityPlural}}Repository } from "@modules/{{module}}/repositories/I{{entityPlural}}Repository";
+
+interface IRequest {
+{{#each fields}}
+  {{#ifEquals @key ../entity_pk}}
+    {{@key}}?: {{this}};  
+  {{/ifEquals}}
+{{/each}}
+}
+
+@injectable()
+class {{useCaseNamePascal}}UseCase {
+    constructor(
+        @inject("{{entityPlural}}Repository")
+        private {{entityPluralLower}}Repository: I{{entityPlural}}Repository
+    ) {}
+
+    async execute({ {{entity_pk}} } : IRequest ): Promise<void> {
+        // check if has pk_field
+        if (!data.{{entity_pk}}) {
+            throw new AppError(
+                "O código PK da {{entity}} deve ser informado."
+            );
+        }
+
+        // check if {{entity}} exists
+        const {{entityLower}}Exists = await this.{{entityPluralLower}}Repository.getByPK(data.{{entity_pk}});
+
+        if (!{{entityLower}}Exists) {
+            throw new AppError(
+                "Código PK {{entity}} informado, não foi econtrado."
+            );
+        }
+
+        await this.{{entityPluralLower}}Repository.delete({{entity_pk}});
+        
+    }
+}
+
+export { {{useCaseNamePascal}}UseCase };

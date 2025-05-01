@@ -33,7 +33,7 @@ class UpdateUserUseCase {
             throw new AppError("Código PK User informado, não foi econtrado.");
         }
 
-        const newUser = await this.usersRepository.create(data);
+        const newUser = await this.usersRepository.update(data);
         return newUser;
     }
 }

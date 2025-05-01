@@ -106,8 +106,8 @@ async function main() {
     let pkParamName = "";
     let hasPkInParams = "Não";
 
-    // caso update, questiona se tem pk nos params
-    if (useCase === "update") {
+    // caso update or delete, questiona se tem pk nos params
+    if (useCase === "update" || useCase === "delete") {
         hasPkInParams = await select({
             message: "Obter PK nos params?",
             choices: ["Sim", "Não"],

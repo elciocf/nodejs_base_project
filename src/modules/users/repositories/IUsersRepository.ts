@@ -14,7 +14,7 @@ interface IUsersRepository {
     update(data: IUserDTO): Promise<User>;
     findByEmail(email: string): Promise<User>;
     findByLogin(login: string): Promise<User>;
-    getByPk(cod: number): Promise<User>;
+    getByPK(cod: number): Promise<User>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
     changeUserType(
         cod_tipo_usuario: number,

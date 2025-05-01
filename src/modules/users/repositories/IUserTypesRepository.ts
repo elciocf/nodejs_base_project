@@ -13,7 +13,7 @@ interface IUserTypesRepository {
     create(data: IUserTypeDTO): Promise<UserType>;
     update(data: IUserTypeDTO): Promise<UserType>;
     delete(cod: number, transfer?: number): Promise<void>;
-    getByCod(cod: number): Promise<UserType>;
+    getByPK(cod: number): Promise<UserType>;
     listAll(): Promise<UserType[]>;
     InUse(cod: number): Promise<boolean>;
 }

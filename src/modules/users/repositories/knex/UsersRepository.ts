@@ -28,7 +28,7 @@ class UsersRepository implements IUsersRepository {
         return user;
     }
 
-    async getByPk(cod: number): Promise<User> {
+    async getByPK(cod: number): Promise<User> {
         const user = await db("usuarios").where("cod_usuario", cod).first();
         return user;
     }
