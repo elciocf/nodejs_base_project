@@ -103,6 +103,22 @@ async function main() {
         default: `${useCase}${entity}`,
     });
 
+    let pkParamName = "";
+    let hasPkInParams = "Não";
+
+    // caso update, questiona se tem pk nos params
+    if (useCase === "update") {
+        hasPkInParams = await select({
+            message: "Obter PK nos params?",
+            choices: ["Sim", "Não"],
+        });
+
+        pkParamName = await input({
+            message: "Qual o nome do campo PK nos params?",
+            default: firstField,
+        });
+    }
+
     const useCaseNamePascal = pascalCase(useCaseName);
 
     let useCaseDir = path.join(moduleDir, "useCases", module.toLowerCase());
@@ -156,6 +172,9 @@ async function main() {
             entityLower,
             entityPlural,
             entityPluralLower: entityPlural.toLowerCase(),
+            pkOnParams: hasPkInParams === "Sim",
+            params_pk: pkParamName,
+            entity_pk: pkField,
         })
     );
 
