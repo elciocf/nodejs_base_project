@@ -17,6 +17,7 @@ Estão inclusos:
 - `Rotas`: signin, refresh_token
 - `JSONWebToken`: Geração de tokens, refresh_tokens.
 - `middleware`: Para validar a autenticação
+- `CLI`: Para criar entidades e useCases
 
 ## Scripts Disponíveis
 
@@ -26,6 +27,8 @@ No arquivo `package.json`, você encontrará os seguintes scripts úteis:
 - `build`: Compila o código TypeScript para JavaScript e ajusta os paths.
 - `production`: Inicia o servidor em modo de produção com `pm2`.
 - `initial-seeds`: Executa os seeds iniciais configurados no Knex.
+- `generate:entity`: Executa CLI - assistente para adicionar entidade ( DTO, entity, IRepository e Knex/Repository)
+- `generate:usecase`: Executa CLI  - assistente para adicionar useCases [Controller.ts e UseCase.ts] ( create, update, delete, listAll e getByPK)
 
 ## Configuração
 
