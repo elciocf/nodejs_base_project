@@ -1,0 +1,35 @@
+import { inject, injectable } from "tsyringe";
+
+import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
+import { I{{entityPlural}}Repository } from "@modules/{{module}}/repositories/I{{entityPlural}}Repository";
+
+
+interface IRequest {
+    page: number;
+    limit: number;
+    order: string;    
+}
+
+interface IList {
+    data: {{entity}}[];
+    count: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+}
+
+@injectable()
+class {{useCaseNamePascal}}UseCase {
+    constructor(
+        @inject("{{entityPlural}}Repository")
+        private {{entityPluralLower}}Repository: I{{entityPlural}}Repository
+    ) {}
+
+    async execute({page, limit, order}: IRequest): Promise<IList> {
+
+        const list = await this.{{entityPluralLower}}Repository.listAll(data);
+        return list;
+    }
+}
+
+export { {{useCaseNamePascal}}UseCase };
