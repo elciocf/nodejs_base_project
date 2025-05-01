@@ -1,5 +1,5 @@
-import { User } from "@modules/users/entities/Users";
-import { IUserRepository } from "@modules/users/repositories/IUsersRepository";
+import { User } from "@modules/users/entities/User";
+import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
 import { inject, injectable } from "tsyringe";
 
 interface IRequest {
@@ -15,11 +15,11 @@ interface IRequest {
 class CreateUserUseCase {
     constructor(
         @inject("UsersRepository")
-        private userRepository: IUsersRepository
+        private usersRepository: IUsersRepository
     ) {}
 
     async execute(data: IRequest): Promise<User> {
-        const newUser = await this.userRepository.create(data);
+        const newUser = await this.usersRepository.create(data);
         return newUser;
     }
 }

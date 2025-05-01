@@ -9,7 +9,7 @@ interface IList {
     totalPages: number;
 }
 
-interface I{{entity}}Repository {
+interface I{{entityPlural}}Repository {
     create(data: I{{entity}}DTO): Promise<{{entity}}>;
     update(data: I{{entity}}DTO): Promise<{{entity}}>;
     delete({{entity_pk}}: number): Promise<void>;
@@ -17,4 +17,4 @@ interface I{{entity}}Repository {
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
 }
 
-export { I{{entity}}Repository, IList };
+export { I{{entityPlural}}Repository, IList };

@@ -2,9 +2,9 @@ import { db } from "@configs/knex";
 import { I{{entity}}DTO } from "@modules/{{module}}/dto/I{{entity}}DTO";
 import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
 
-import { I{{entity}}Repository, IList } from "../I{{entity}}Repository";
+import { I{{entityPlural}}Repository, IList } from "../I{{entityPlural}}Repository";
 
-class {{entity}}Repository implements I{{entity}}Repository {
+class {{entityPlural}}Repository implements I{{entityPlural}}Repository {
     async create(data: I{{entity}}DTO): Promise<{{entity}}> {
         const [created] = await db("{{table}}").insert(data).returning("*");
         return created;
@@ -51,4 +51,4 @@ class {{entity}}Repository implements I{{entity}}Repository {
     }
 }
 
-export { {{entity}}Repository };
+export { {{entityPlural}}Repository };

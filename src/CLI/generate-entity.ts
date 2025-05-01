@@ -3,28 +3,16 @@ import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
 
+import {
+    ensureDir,
+    pascalCase,
+    runEslintOnFiles,
+    writeFileIfNotExists,
+} from "./utils";
+
 Handlebars.registerHelper("ifEquals", function ifEquals(arg1, arg2, options) {
     return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 });
-
-// --- Funções utilitárias ---
-
-function pascalCase(str: string) {
-    return str.replace(/(^\w|_\w)/g, (m) => m.replace("_", "").toUpperCase());
-}
-
-function lowerFirstLetter(str: string) {
-    return str.charAt(0).toLowerCase() + str.slice(1);
-}
-
-function ensureDir(dir: string) {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-function writeFileIfNotExists(filename: string, data: string) {
-    if (!fs.existsSync(filename))
-        fs.writeFileSync(filename, data, { flag: "wx" });
-}
 
 // --- CLI ---
 async function main() {
@@ -53,6 +41,13 @@ async function main() {
     // 2. Pergunta o nome da entidade
     const entity = await input({ message: "Qual o nome da entidade?" });
     const entityPascal = pascalCase(entity);
+
+    // 2.1 Pergunta o nome da entidade no plural
+    const entityPlural = await input({
+        message: "Qual o nome da entidade no plural?",
+        default: `${entityPascal}s`,
+    });
+
     // const entityLower = lowerFirstLetter(entity);
     // const entityDir = path.join(moduleDir, entityLower);
     const entityDir = moduleDir;
@@ -99,6 +94,7 @@ async function main() {
     }
 
     // --- Escreve arquivos ---
+    const files = [];
 
     // 1. DTO
     const dtoTpl = compileTemplate("DTO");
@@ -106,6 +102,8 @@ async function main() {
         path.join(entityDir, "dto", `${entityPascal}DTO.ts`),
         dtoTpl({ entity: entityPascal, entity_pk: pkField, fields })
     );
+
+    files.push(path.join(entityDir, "dto", `${entityPascal}DTO.ts`));
 
     // 2. Entidade
     const entityTpl = compileTemplate("Entity");
@@ -118,18 +116,23 @@ async function main() {
             fields,
         })
     );
+    files.push(path.join(entityDir, "entities", `${entityPascal}.ts`));
 
     // 3. Interface de Repositório
     const repoTpl = compileTemplate("IRepository");
     writeFileIfNotExists(
-        path.join(entityDir, "repositories", `I${entityPascal}Repository.ts`),
+        path.join(entityDir, "repositories", `I${entityPlural}Repository.ts`),
         repoTpl({
             module,
+            entityPlural,
             entity: entityPascal,
             entity_pk: pkField,
             table: tableName,
             fields,
         })
+    );
+    files.push(
+        path.join(entityDir, "repositories", `I${entityPlural}Repository.ts`)
     );
 
     // 4. Repositório
@@ -139,10 +142,11 @@ async function main() {
             entityDir,
             "repositories",
             "knex",
-            `${entityPascal}Repository.ts`
+            `${entityPlural}Repository.ts`
         ),
         repoKnexTpl({
             module,
+            entityPlural,
             entity: entityPascal,
             entity_pk: pkField,
             table: tableName,
@@ -150,7 +154,18 @@ async function main() {
         })
     );
 
+    files.push(
+        path.join(
+            entityDir,
+            "repositories",
+            "knex",
+            `${entityPlural}Repository.ts`
+        )
+    );
+
     console.log("Arquivos criados com sucesso!");
+
+    runEslintOnFiles(files);
 }
 
 main();

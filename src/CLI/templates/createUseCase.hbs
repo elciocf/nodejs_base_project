@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
-import { {{entity}} } from "@modules/{{module}}/entities/{{modulePascal}}";
-import { I{{entity}}Repository } from "@modules/{{module}}/repositories/I{{modulePascal}}Repository";
+import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
+import { I{{entityPlural}}Repository } from "@modules/{{module}}/repositories/I{{entityPlural}}Repository";
 
 interface IRequest {
     {{#each fields}}
@@ -16,13 +16,13 @@ interface IRequest {
 @injectable()
 class {{useCaseNamePascal}}UseCase {
     constructor(
-        @inject("{{modulePascal}}Repository")
-        private {{entityLower}}Repository: I{{modulePascal}}Repository
+        @inject("{{entityPlural}}Repository")
+        private {{entityPluralLower}}Repository: I{{entityPlural}}Repository
     ) {}
 
     async execute(data: IRequest): Promise<{{entity}}> {
         
-        const new{{entity}} = await this.{{entityLower}}Repository.create(data);
+        const new{{entity}} = await this.{{entityPluralLower}}Repository.create(data);
         return new{{entity}};
     }
 }

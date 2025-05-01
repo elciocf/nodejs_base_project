@@ -1,46 +1,21 @@
 import { input, select } from "@inquirer/prompts";
-import { exec } from "child_process";
 import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
 
-// Função para rodar o eslint --fix
-function runEslintOnFiles(files: string[]) {
-    // Junta os paths em uma string e executa o comando
-    const cmd = `yarn eslint ${files.map((f) => `"${f}"`).join(" ")} --fix`;
-    exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Erro ao rodar ESLint: ${error.message}`);
-            return;
-        }
-        if (stdout) console.log(stdout);
-        if (stderr) console.error(stderr);
-    });
-}
+import {
+    ensureDir,
+    lowerFirstLetter,
+    pascalCase,
+    runEslintOnFiles,
+    writeFileIfNotExists,
+} from "./utils";
 
 Handlebars.registerHelper("ifEquals", function ifEquals(arg1, arg2, options) {
     return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 });
 
 // --- Funções utilitárias ---
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function pascalCase(str: string) {
-    return str.replace(/(^\w|_\w)/g, (m) => m.replace("_", "").toUpperCase());
-}
-
-function lowerFirstLetter(str: string) {
-    return str.charAt(0).toLowerCase() + str.slice(1);
-}
-
-function ensureDir(dir: string) {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-function writeFileIfNotExists(filename: string, data: string) {
-    if (!fs.existsSync(filename))
-        fs.writeFileSync(filename, data, { flag: "wx" });
-}
 
 // --- CLI ---
 async function main() {
@@ -78,6 +53,11 @@ async function main() {
     });
 
     const entityLower = entity.toLowerCase();
+
+    const entityPlural = await input({
+        message: "Qual o nome da entidade no plural?",
+        default: `${entity}s`,
+    });
 
     console.log("Entidade escolhida:", entity);
 
@@ -151,6 +131,8 @@ async function main() {
             module,
             modulePascal: pascalCase(module),
             entity,
+            entityPlural,
+            entityPluralLower: entityPlural.toLowerCase(),
             entity_pk: pkField,
             fields,
             entityLower,
@@ -172,6 +154,8 @@ async function main() {
             useCaseName,
             useCaseNameLowerFirst: lowerFirstLetter(useCaseName),
             entityLower,
+            entityPlural,
+            entityPluralLower: entityPlural.toLowerCase(),
         })
     );
 
