@@ -110,10 +110,12 @@ async function main() {
 
     // caso update or delete, questiona se tem pk nos params
     if (useCase === "update" || useCase === "delete" || useCase === "getByPK") {
-        hasPkInParams = await select({
-            message: "Obter PK nos params?",
-            choices: ["Sim", "Não"],
-        });
+        if (useCase !== "getByPK") {
+            hasPkInParams = await select({
+                message: "Obter PK nos params?",
+                choices: ["Sim", "Não"],
+            });
+        }
 
         pkParamName = await input({
             message: "Qual o nome do campo PK nos params?",

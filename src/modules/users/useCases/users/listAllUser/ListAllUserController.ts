@@ -1,9 +1,9 @@
 import { Response, Request } from "express";
 import { container } from "tsyringe";
 
-import { {{useCaseNamePascal}}UseCase } from "./{{useCaseNamePascal}}UseCase";
+import { ListAllUserUseCase } from "./ListAllUserUseCase";
 
-class {{useCaseNamePascal}}Controller {
+class ListAllUserController {
     async handle(request: Request, response: Response): Promise<Response> {
         const page = (
             Number.isNaN(Number(request.query.page))
@@ -16,13 +16,12 @@ class {{useCaseNamePascal}}Controller {
                 : Number(request.query.limit)
         ) as number;
         const order = (request.query.order || "asc") as string;
-        
 
-        const {{useCaseNameLowerFirst}}UseCase = container.resolve({{useCaseNamePascal}}UseCase);
+        const listAllUserUseCase = container.resolve(ListAllUserUseCase);
 
-        const list = await {{useCaseNameLowerFirst}}UseCase.execute({page, limit, order});
+        const list = await listAllUserUseCase.execute({ page, limit, order });
         return response.status(200).json(list);
     }
 }
 
-export { {{useCaseNamePascal}}Controller };
+export { ListAllUserController };

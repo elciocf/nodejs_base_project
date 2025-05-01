@@ -27,7 +27,7 @@ class {{useCaseNamePascal}}UseCase {
 
     async execute({page, limit, order}: IRequest): Promise<IList> {
 
-        const list = await this.{{entityPluralLower}}Repository.listAll(data);
+        const list = await this.{{entityPluralLower}}Repository.listAll(page, limit, order);
         return list;
     }
 }

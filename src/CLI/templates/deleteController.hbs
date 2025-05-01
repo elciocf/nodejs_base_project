@@ -5,7 +5,6 @@ import { {{useCaseNamePascal}}UseCase } from "./{{useCaseNamePascal}}UseCase";
 
 class {{useCaseNamePascal}}Controller {
     async handle(request: Request, response: Response): Promise<Response> {
-        const data = request.body;
         {{#if pkOnParams}}
         const { {{params_pk}} } = request.params;
         const {{entity_pk}} = Number({{params_pk}}); 

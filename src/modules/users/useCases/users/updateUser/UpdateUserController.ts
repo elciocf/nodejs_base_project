@@ -7,7 +7,7 @@ class UpdateUserController {
     async handle(request: Request, response: Response): Promise<Response> {
         const data = request.body;
         const { coduser } = request.params;
-        data.cod_usuario = coduser;
+        data.cod_usuario = Number(coduser);
 
         const updateUserUseCase = container.resolve(UpdateUserUseCase);
 

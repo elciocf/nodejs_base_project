@@ -21,7 +21,7 @@ class {{useCaseNamePascal}}UseCase {
 
     async execute({ {{entity_pk}} } : IRequest ): Promise<{{entity}}> {
         // check if has pk_field
-        if (!data.{{entity_pk}}) {
+        if (!{{entity_pk}}) {
             throw new AppError(
                 "O código PK da {{entity}} deve ser informado."
             );
