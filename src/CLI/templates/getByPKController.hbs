@@ -1,0 +1,19 @@
+import { Response, Request } from "express";
+import { container } from "tsyringe";
+
+import { {{useCaseNamePascal}}UseCase } from "./{{useCaseNamePascal}}UseCase";
+
+class {{useCaseNamePascal}}Controller {
+    async handle(request: Request, response: Response): Promise<Response> {
+        const { {{params_pk}} } = request.params;
+        const {{entity_pk}} = Number({{params_pk}});         
+        
+
+        const {{useCaseNameLowerFirst}}UseCase = container.resolve({{useCaseNamePascal}}UseCase);
+
+        const {{entity}} = await {{useCaseNameLowerFirst}}UseCase.execute({{entity_pk}});
+        return response.status(200).json({{entity}});
+    }
+}
+
+export { {{useCaseNamePascal}}Controller };

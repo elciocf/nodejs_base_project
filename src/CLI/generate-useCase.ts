@@ -59,7 +59,13 @@ async function main() {
         default: `${entity}s`,
     });
 
-    console.log("Entidade escolhida:", entity);
+    // escolher qual o padrão de useCase [create, update, delete, list, getbypk]
+    const useCase = await select({
+        message: "Qual o padrão de useCase?",
+        choices: ["create", "update", "delete", "listAll", "getByPK"],
+    });
+
+    let pkField = "";
 
     // Regex para pegar todas as linhas do tipo: palavra: tipo;
     // eslint-disable-next-line no-useless-escape
@@ -84,19 +90,15 @@ async function main() {
     // remove os campos updated_at e created_at
     delete fields.created_at;
     delete fields.updated_at;
+    const firstField = Object.keys(fields)[0];
 
     // Pergunta o campo PK - first field as default
-    const firstField = Object.keys(fields)[0];
-    const pkField = await input({
-        message: "Qual o nome do campo PK?",
-        default: firstField,
-    });
-
-    // escolher qual o padrão de useCase [create, update, delete, list, getbypk]
-    const useCase = await select({
-        message: "Qual o padrão de useCase?",
-        choices: ["create", "update", "delete", "list", "getbypk"],
-    });
+    if (useCase !== "listAll") {
+        pkField = await input({
+            message: "Qual o nome do campo PK?",
+            default: firstField,
+        });
+    }
 
     const useCaseName = await input({
         message: "Qual o nome do useCase",
@@ -107,7 +109,7 @@ async function main() {
     let hasPkInParams = "Não";
 
     // caso update or delete, questiona se tem pk nos params
-    if (useCase === "update" || useCase === "delete") {
+    if (useCase === "update" || useCase === "delete" || useCase === "getByPK") {
         hasPkInParams = await select({
             message: "Obter PK nos params?",
             choices: ["Sim", "Não"],
