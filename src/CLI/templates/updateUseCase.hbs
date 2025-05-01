@@ -35,7 +35,7 @@ class {{useCaseNamePascal}}UseCase {
             );
         }
 
-        const new{{entity}} = await this.{{entityPluralLower}}Repository.create(data);
+        const new{{entity}} = await this.{{entityPluralLower}}Repository.update(data);
         return new{{entity}};
     }
 }
