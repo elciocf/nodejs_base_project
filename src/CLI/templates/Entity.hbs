@@ -3,7 +3,7 @@ class {{entity}} {
     {{@key}}: {{this}};
     {{/each}}
 
-  constructor() {
+    constructor() {
         if (!this.{{entity_pk}}) {
             this.created_at = new Date();
             this.updated_at = new Date();

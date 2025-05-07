@@ -81,7 +81,7 @@ async function main() {
     });
 
     // --- Criação das pastas padrões ---
-    const folders = ["dto", "entities", "repositories", "repositories/knex"];
+    const folders = ["dtos", "entities", "repositories", "repositories/knex"];
     folders.forEach((folder) => ensureDir(path.join(entityDir, folder)));
 
     // --- Carrega templates ---
@@ -99,11 +99,11 @@ async function main() {
     // 1. DTO
     const dtoTpl = compileTemplate("DTO");
     writeFileIfNotExists(
-        path.join(entityDir, "dto", `${entityPascal}DTO.ts`),
+        path.join(entityDir, "dtos", `I${entityPascal}DTO.ts`),
         dtoTpl({ entity: entityPascal, entity_pk: pkField, fields })
     );
 
-    files.push(path.join(entityDir, "dto", `${entityPascal}DTO.ts`));
+    files.push(path.join(entityDir, "dtos", `I${entityPascal}DTO.ts`));
 
     // 2. Entidade
     const entityTpl = compileTemplate("Entity");
@@ -162,6 +162,56 @@ async function main() {
             `${entityPlural}Repository.ts`
         )
     );
+
+    // 5. Add container declaration
+    // Verifica se já existe um arquivo  [module].containers.ts na pasta ./src/shared/containers
+    const containersFile = path.join(
+        "src",
+        "shared",
+        "containers",
+        `${module}.containers.ts`
+    );
+
+    if (!fs.existsSync(containersFile)) {
+        // Se o arquivo não existe, cria o arquivo
+        writeFileIfNotExists(
+            containersFile,
+            `import { container } from "tsyringe";\n\n\n// EOF - used by CLI Generate Entity`
+        );
+
+        // Adiciona a importação do repositório no index.ts
+        const indexFile = path.join("src", "shared", "containers", "index.ts");
+        const indexFileContent = fs.readFileSync(indexFile, "utf-8");
+        // replace the line `// End of imports - used by CLI Generate Entity` with the new import
+        const newIndexFileContent = indexFileContent.replace(
+            "// End of imports - used by CLI Generate Entity",
+            `import "./${module}.containers";\n// End of imports - used by CLI Generate Entity`
+        );
+        fs.writeFileSync(indexFile, newIndexFileContent);
+    }
+
+    files.push(containersFile);
+
+    // Adiciona a declaração do repositório no arquivo [module].containers.ts acima da linha `import { container } from "tsyringe";`
+    const containersFileContent = fs.readFileSync(containersFile, "utf-8");
+    const newContent = containersFileContent.replace(
+        `import { container } from "tsyringe";`,
+        `import { I${entityPlural}Repository } from "@modules/${module}/repositories/I${entityPlural}Repository";
+        import { ${entityPlural}Repository } from "@modules/${module}/repositories/knex/${entityPlural}Repository";
+        import { container } from "tsyringe";`
+    );
+
+    fs.writeFileSync(containersFile, newContent);
+
+    // Adiciona a linha de registro do repositório no arquivo [module].containers.ts
+    const containersFileContent2 = fs.readFileSync(containersFile, "utf-8");
+
+    const newContent2 = containersFileContent2.replace(
+        "// EOF - used by CLI Generate Entity",
+        `// I${entityPlural}Repository
+        container.registerSingleton<I${entityPlural}Repository>(\n    "${entityPlural}Repository",\n    ${entityPlural}Repository\n);\n// EOF - used by CLI Generate Entity\n`
+    );
+    fs.writeFileSync(containersFile, newContent2);
 
     console.log("Arquivos criados com sucesso!");
 

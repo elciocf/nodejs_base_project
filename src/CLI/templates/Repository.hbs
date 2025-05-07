@@ -1,5 +1,5 @@
 import { db } from "@configs/knex";
-import { I{{entity}}DTO } from "@modules/{{module}}/dto/I{{entity}}DTO";
+import { I{{entity}}DTO } from "@modules/{{module}}/dtos/I{{entity}}DTO";
 import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
 
 import { I{{entityPlural}}Repository, IList } from "../I{{entityPlural}}Repository";
@@ -12,7 +12,7 @@ class {{entityPlural}}Repository implements I{{entityPlural}}Repository {
 
     async update(data: I{{entity}}DTO): Promise<{{entity}}> {
         const [updated] = await db("{{table}}")
-            .where("{{entity_pk}}", (data as any).{{entity_pk}})
+            .where("{{entity_pk}}", data.{{entity_pk}})
             .update(data)
             .returning("*");
         return updated;
