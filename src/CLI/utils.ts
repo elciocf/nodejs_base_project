@@ -20,6 +20,10 @@ export function pascalCase(str: string) {
     return str.replace(/(^\w|_\w)/g, (m) => m.replace("_", "").toUpperCase());
 }
 
+export function upperFirstLetter(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export function lowerFirstLetter(str: string) {
     return str.charAt(0).toLowerCase() + str.slice(1);
 }

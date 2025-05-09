@@ -9,6 +9,7 @@ import {
     pascalCase,
     runEslintOnFiles,
     writeFileIfNotExists,
+    upperFirstLetter,
 } from "./utils";
 
 Handlebars.registerHelper("ifEquals", function ifEquals(arg1, arg2, options) {
@@ -38,106 +39,65 @@ async function main() {
         });
     } else {
         // Verifica se o módulo existe
-        const moduleExists = path.join("src/modules", module);
+        const moduleExists = path.join("src", "modules", module);
         if (!fs.existsSync(moduleExists)) {
             console.error(`Módulo ${module} não encontrado.`);
             return;
         }
     }
 
+    const moduleDir = path.join("src", "modules", module);
+
     const routesFile = path.join(
-        "src/shared/http/routes/",
+        "src",
+        "shared",
+        "http",
+        "routes",
         `${module}.routes.ts`
     );
 
+    // Verifica se módulo tem pasta de UseCases
+    const useCasesDir = path.join(moduleDir, "useCases");
+    if (!fs.existsSync(useCasesDir)) {
+        console.error(`Módulo ${module} não tem pasta de UseCases.`);
+        return;
+    }
+
+    // lista pastas dentro de useCases
+    const entityUseCases = fs
+        .readdirSync(useCasesDir)
+        .filter((file) =>
+            fs.statSync(path.join(useCasesDir, file)).isDirectory()
+        );
+
+    console.log("entityUseCases", entityUseCases);
+
+    const entityUseCase: string = await select({
+        message: "Qual a entidade/useCase?",
+        choices: entityUseCases,
+    });
+
     // lista useCases do módulo
-    const entities = fs
-        .readdirSync(path.join(moduleDir, "entities"))
-        .map((file) => file.replace(".ts", ""));
+    const useCases = fs
+        .readdirSync(path.join(moduleDir, "useCases", entityUseCase))
+        .filter((file) =>
+            fs
+                .statSync(path.join(moduleDir, "useCases", entityUseCase, file))
+                .isDirectory()
+        );
 
-    const entity: string = await select({
-        message: "Qual a entidade?",
-        choices: entities,
+    const useCaseSel: string = await select({
+        message: "Qual o useCase?",
+        choices: useCases,
     });
 
-    const entityLower = entity.toLowerCase();
+    // const useCaseName = `${upperFirstLetter(useCaseSel)}UseCase`;
+    const controllerName = `${upperFirstLetter(useCaseSel)}Controller`;
 
-    const entityPlural = await input({
-        message: "Qual o nome da entidade no plural?",
-        default: `${entity}s`,
+    const httpMethod = await select({
+        message: "Qual HTTP method?",
+        choices: ["get", "post", "put", "delete", "patch"],
     });
-
-    // escolher qual o padrão de useCase [create, update, delete, list, getbypk]
-    const useCase = await select({
-        message: "Qual o padrão de useCase?",
-        choices: ["create", "update", "delete", "listAll", "getByPK"],
-    });
-
-    let pkField = "";
-
-    // Regex para pegar todas as linhas do tipo: palavra: tipo;
-    // eslint-disable-next-line no-useless-escape
-    const FIELD_REGEX = /^\s*(\w+):\s*([\w\[\]\|]+);/gm;
-
-    const entityFile = path.join(moduleDir, "entities", `${entity}.ts`);
-    const source = fs.readFileSync(entityFile, "utf8");
-
-    const fields: { [key: string]: string } = {};
-    let match: RegExpExecArray | null;
-    match = FIELD_REGEX.exec(source);
-    while (match) {
-        // Ignora 'constructor' e outros métodos
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [_, name, type] = match;
-        if (!["constructor"].includes(name)) {
-            fields[name] = type;
-        }
-        match = FIELD_REGEX.exec(source);
-    }
-
-    // remove os campos updated_at e created_at
-    delete fields.created_at;
-    delete fields.updated_at;
-    const firstField = Object.keys(fields)[0];
-
-    // Pergunta o campo PK - first field as default
-    if (useCase !== "listAll") {
-        pkField = await input({
-            message: "Qual o nome do campo PK?",
-            default: firstField,
-        });
-    }
-
-    const useCaseName = await input({
-        message: "Qual o nome do useCase",
-        default: `${useCase}${entity}`,
-    });
-
-    let pkParamName = "";
-    let hasPkInParams = "Não";
-
-    // caso update or delete, questiona se tem pk nos params
-    if (useCase === "update" || useCase === "delete" || useCase === "getByPK") {
-        if (useCase !== "getByPK") {
-            hasPkInParams = await select({
-                message: "Obter PK nos params?",
-                choices: ["Sim", "Não"],
-            });
-        }
-
-        pkParamName = await input({
-            message: "Qual o nome do campo PK nos params?",
-            default: firstField,
-        });
-    }
-
-    const useCaseNamePascal = pascalCase(useCaseName);
-
-    let useCaseDir = path.join(moduleDir, "useCases", module.toLowerCase());
-    ensureDir(moduleDir);
-
-    useCaseDir = path.join(useCaseDir, useCaseName);
-    ensureDir(useCaseDir);
 
     // --- Carrega templates ---
     function compileTemplate(templateName: string) {
@@ -151,48 +111,92 @@ async function main() {
     // --- Escreve arquivos ---
     const files = [];
 
-    // 1. UsesCases
-    const useCaseTpl = compileTemplate(`${useCase}UseCase`);
-    writeFileIfNotExists(
-        path.join(useCaseDir, `${useCaseNamePascal}UseCase.ts`),
-        useCaseTpl({
-            module,
-            modulePascal: pascalCase(module),
-            entity,
-            entityPlural,
-            entityPluralLower: entityPlural.toLowerCase(),
-            entity_pk: pkField,
-            fields,
-            entityLower,
-            useCaseName,
-            useCaseNamePascal,
-        })
+    // Verifica se o arquivo de rotas do módulo ainda não existe
+    if (!fs.existsSync(routesFile)) {
+        const routeTPL = compileTemplate("moduleRoute");
+        writeFileIfNotExists(
+            path.join("src", "shared", "http", "routes", `${module}.routes.ts`),
+            routeTPL({ module })
+        );
+
+        // Adiciona importação do módulo de rotas no arquivo principal de rotas
+        const mainRouteFile = path.join(
+            "src",
+            "shared",
+            "http",
+            "routes",
+            "index.ts"
+        );
+
+        const httpPath = await input({
+            message: "Qual o path principal?",
+            default: `/${entityUseCase.toLowerCase()}`,
+        });
+
+        // Adiciona a importação do repositório no index.ts
+        const indexFileContent = fs.readFileSync(mainRouteFile, "utf-8");
+        // replace the line `const router = Router();
+        let newIndexFileContent = indexFileContent.replace(
+            "\nconst router = Router();",
+            `import { ${module}Routes } from "./${module}.routes";\nconst router = Router();`
+        );
+
+        newIndexFileContent = newIndexFileContent.replace(
+            "export { router };",
+            `router.use("${httpPath}",${module}Routes);\n\nexport { router };`
+        );
+
+        fs.writeFileSync(mainRouteFile, newIndexFileContent);
+        files.push(mainRouteFile);
+    }
+
+    files.push(routesFile);
+
+    // Importa o controller no arquivo de rotas
+    const routeFileContent = fs.readFileSync(routesFile, "utf-8");
+    let newRouteFileContent = routeFileContent.replace(
+        `\nconst ${module}Routes = Router();`,
+        `import { ${controllerName} } from "@modules/${module}/useCases/${entityUseCase}/${useCaseSel}/${controllerName}";\nconst ${module}Routes = Router();`
     );
 
-    files.push(path.join(useCaseDir, `${useCaseNamePascal}UseCase.ts`));
-
-    // 2. Controller
-    const controllerTpl = compileTemplate(`${useCase}Controller`);
-    writeFileIfNotExists(
-        path.join(useCaseDir, `${useCaseNamePascal}Controller.ts`),
-        controllerTpl({
-            module,
-            modulePascal: pascalCase(module),
-            useCaseNamePascal,
-            useCaseName,
-            useCaseNameLowerFirst: lowerFirstLetter(useCaseName),
-            entityLower,
-            entityPlural,
-            entityPluralLower: entityPlural.toLowerCase(),
-            pkOnParams: hasPkInParams === "Sim",
-            params_pk: pkParamName,
-            entity_pk: pkField,
-        })
+    // Declara o controller no arquivo de rotas
+    newRouteFileContent = newRouteFileContent.replace(
+        `const ${module}Routes = Router();`,
+        `const ${module}Routes = Router();\n\nconst ${lowerFirstLetter(
+            controllerName
+        )} = new ${controllerName}();`
     );
 
-    files.push(path.join(useCaseDir, `${useCaseNamePascal}Controller.ts`));
+    let auxPath = entityUseCase.toLowerCase();
+    if (auxPath === module.toLowerCase()) {
+        auxPath = "";
+    }
 
-    console.log("Arquivos criados com sucesso!");
+    const httpSubPath = await input({
+        message: "Qual o subpath?",
+        default: `/${auxPath}`,
+    });
+
+    // check if // ${entityUseCase} exists in the file
+    const regex = new RegExp(`// ${entityUseCase}`, "g");
+    if (!newRouteFileContent.match(regex)) {
+        newRouteFileContent = newRouteFileContent.replace(
+            `\nexport { ${module}Routes };`,
+            ` ${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
+                controllerName
+            )}.handle);\n\nexport { ${module}Routes };`
+        );
+    } else {
+        newRouteFileContent = newRouteFileContent.replace(
+            `// ${entityUseCase}`,
+            `// ${entityUseCase}\n\n${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
+                controllerName
+            )}.handle);\n\nexport { ${module}Routes };`
+        );
+    }
+
+    fs.writeFileSync(routesFile, newRouteFileContent);
+    console.log("Processo concluído!");
 
     runEslintOnFiles(files);
 }
