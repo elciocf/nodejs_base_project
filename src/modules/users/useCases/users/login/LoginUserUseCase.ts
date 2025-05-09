@@ -36,20 +36,14 @@ class LoginUserUseCase {
         const user = await this.usersRepository.findByEmail(email);
 
         if (!user) {
-            throw new AppError(
-                "Código CICOM, E-mail ou Senha incorretos!",
-                401
-            );
+            throw new AppError("E-mail ou Senha incorretos!", 401);
         }
 
         // senha correta
         const passwordMatch = await compare(senha, user.senha);
 
         if (!passwordMatch) {
-            throw new AppError(
-                "Código CICOM, E-mail ou Senha incorretos!",
-                401
-            );
+            throw new AppError("E-mail ou Senha incorretos!", 401);
         }
 
         // TO DO - check if user is active

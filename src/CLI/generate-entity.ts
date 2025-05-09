@@ -33,6 +33,13 @@ async function main() {
             message: "Selecione o módulo",
             choices: modules,
         });
+    } else {
+        // Verifica se o módulo existe
+        const moduleExists = path.join("src/modules", module);
+        if (!fs.existsSync(moduleExists)) {
+            console.error(`Módulo ${module} não encontrado.`);
+            return;
+        }
     }
 
     const moduleDir = path.resolve("src/modules/", module);

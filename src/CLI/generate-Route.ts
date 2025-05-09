@@ -21,7 +21,7 @@ Handlebars.registerHelper("ifEquals", function ifEquals(arg1, arg2, options) {
 async function main() {
     // 1. Pergunta o módulo
     let module = await input({
-        message: "Qual o nome do módulo? <ls - para listar>",
+        message: "Para  qual do módulo? <ls - para listar>",
     });
 
     // 2. Se o usuário digitar "ls", lista os módulos
@@ -31,7 +31,6 @@ async function main() {
             .filter((file) =>
                 fs.statSync(path.join("src/modules", file)).isDirectory()
             );
-        console.log("Módulos disponíveis:", modules);
 
         module = await select({
             message: "Selecione o módulo",
@@ -46,10 +45,12 @@ async function main() {
         }
     }
 
-    const moduleDir = path.resolve("src/modules/", module);
-    ensureDir(moduleDir);
+    const routesFile = path.join(
+        "src/shared/http/routes/",
+        `${module}.routes.ts`
+    );
 
-    // lista entidades do módulo
+    // lista useCases do módulo
     const entities = fs
         .readdirSync(path.join(moduleDir, "entities"))
         .map((file) => file.replace(".ts", ""));

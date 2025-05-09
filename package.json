@@ -9,7 +9,8 @@
         "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s . -o ./dist",
         "initial-seeds": "ts-node-dev -r tsconfig-paths/register -r dotenv/config --inspect --transpile-only --ignore-watch node_modules --respawn --poll src/shared/knex/seeds/initial-seeds.ts",
         "generate:entity": "ts-node src/CLI/generate-entity.ts",
-        "generate:usecase": "ts-node src/CLI/generate-useCase.ts"
+        "generate:usecase": "ts-node src/CLI/generate-useCase.ts",
+        "generate:routes": "ts-node src/CLI/generate-Route.ts"
     },
     "keywords": [],
     "author": "",
