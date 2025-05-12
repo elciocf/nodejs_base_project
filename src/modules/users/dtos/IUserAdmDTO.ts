@@ -1,0 +1,11 @@
+interface IUserAdmDTO {
+    cod_usuario_adm?: string;
+    nome: string;
+    login: string;
+    senha?: string;
+    email: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export { IUserAdmDTO };

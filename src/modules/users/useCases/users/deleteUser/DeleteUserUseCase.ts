@@ -16,12 +16,12 @@ class DeleteUserUseCase {
 
     async execute({ cod_usuario }: IRequest): Promise<void> {
         // check if has pk_field
-        if (!data.cod_usuario) {
+        if (!cod_usuario) {
             throw new AppError("O código PK da User deve ser informado.");
         }
 
         // check if User exists
-        const userExists = await this.usersRepository.getByPK(data.cod_usuario);
+        const userExists = await this.usersRepository.getByPK(cod_usuario);
 
         if (!userExists) {
             throw new AppError("Código PK User informado, não foi econtrado.");

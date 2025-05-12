@@ -1,8 +1,9 @@
 {
-    "cod_token": "string",    
-    "cod_usuario": "string",
-    "refresh_token": "string",
-    "expira_em": "Date",
+    "cod_usuario_adm": "string",    
+    "nome": "string",
+    "login": "string",
+    "senha?": "string",
+    "email": "string",
     "created_at?": "Date",
     "updated_at?": "Date"
 }
