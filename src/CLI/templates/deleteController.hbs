@@ -15,7 +15,7 @@ class {{useCaseNamePascal}}Controller {
 
         const {{useCaseNameLowerFirst}}UseCase = container.resolve({{useCaseNamePascal}}UseCase);
 
-        await {{useCaseNameLowerFirst}}UseCase.execute({{entity_pk}});
+        await {{useCaseNameLowerFirst}}UseCase.execute({ {{entity_pk}} });
         return response.status(201).send();
     }
 }

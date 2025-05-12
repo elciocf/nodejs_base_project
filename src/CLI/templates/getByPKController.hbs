@@ -11,7 +11,7 @@ class {{useCaseNamePascal}}Controller {
 
         const {{useCaseNameLowerFirst}}UseCase = container.resolve({{useCaseNamePascal}}UseCase);
 
-        const {{entityLower}} = await {{useCaseNameLowerFirst}}UseCase.execute({{entity_pk}});
+        const {{entityLower}} = await {{useCaseNameLowerFirst}}UseCase.execute({ {{entity_pk}} });
         return response.status(200).json({{entityLower}});
     }
 }

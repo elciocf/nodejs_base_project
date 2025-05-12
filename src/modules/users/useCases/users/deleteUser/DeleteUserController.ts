@@ -10,7 +10,7 @@ class DeleteUserController {
 
         const deleteUserUseCase = container.resolve(DeleteUserUseCase);
 
-        await deleteUserUseCase.execute(cod_usuario);
+        await deleteUserUseCase.execute({ cod_usuario });
         return response.status(201).send();
     }
 }

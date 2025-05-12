@@ -15,6 +15,7 @@ interface IUsersRepository {
     findByEmail(email: string): Promise<User>;
     findByLogin(login: string): Promise<User>;
     getByPK(cod: number): Promise<User>;
+    delete(cod: number): Promise<void>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
     changeUserType(
         cod_tipo_usuario: number,

@@ -21,14 +21,14 @@ class {{useCaseNamePascal}}UseCase {
 
     async execute({ {{entity_pk}} } : IRequest ): Promise<void> {
         // check if has pk_field
-        if (!data.{{entity_pk}}) {
+        if (!{{entity_pk}}) {
             throw new AppError(
                 "O código PK da {{entity}} deve ser informado."
             );
         }
 
         // check if {{entity}} exists
-        const {{entityLower}}Exists = await this.{{entityPluralLower}}Repository.getByPK(data.{{entity_pk}});
+        const {{entityLower}}Exists = await this.{{entityPluralLower}}Repository.getByPK({{entity_pk}});
 
         if (!{{entityLower}}Exists) {
             throw new AppError(

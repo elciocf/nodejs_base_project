@@ -56,6 +56,10 @@ class UsersRepository implements IUsersRepository {
         };
     }
 
+    async delete(cod: number): Promise<void> {
+        await db("usuarios").where("cod_usuario", cod).del();
+    }
+
     async changeUserType(
         cod_tipo_usuario: number,
         cod_usuario: number
