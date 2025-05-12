@@ -29,6 +29,7 @@ No arquivo `package.json`, você encontrará os seguintes scripts úteis:
 - `initial-seeds`: Executa os seeds iniciais configurados no Knex.
 - `generate:entity`: Executa CLI - assistente para adicionar entidade ( DTO, entity, IRepository e Knex/Repository)
 - `generate:usecase`: Executa CLI  - assistente para adicionar useCases [Controller.ts e UseCase.ts] ( create, update, delete, listAll e getByPK)
+- `generate:routes`: Executa CLI - assustebte para adicionar routes com base no useCase.
 
 ## Configuração
 
