@@ -6,3 +6,12 @@ Content-Type: {{$dotenv CONTENTTYPE}}
 {"email": "elcio@teste.com.br",
 "senha": "Elcio@123"}
 
+// create
+POST {{$dotenv BASEURL}}/users
+Content-Type: {{$dotenv CONTENTTYPE}}
+
+{
+    "name": "Elcio",
+    "email": "elcio@teste.com.br",
+    "password": "Elcio@123"
+}
