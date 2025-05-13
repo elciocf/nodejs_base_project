@@ -24,6 +24,16 @@ class UsersAdmRepository implements IUsersAdmRepository {
             .del();
     }
 
+    async findByEmail(email: string): Promise<UserAdm> {
+        const user = await db("usuarios_adm").where("email", email).first();
+        return user;
+    }
+
+    async findByLogin(login: string): Promise<UserAdm> {
+        const user = await db("usuarios_adm").where("login", login).first();
+        return user;
+    }
+
     async getByPK(cod_usuario_adm: number): Promise<UserAdm> {
         const item = await db("usuarios_adm")
             .where("cod_usuario_adm", cod_usuario_adm)

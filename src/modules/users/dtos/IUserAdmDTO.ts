@@ -1,5 +1,5 @@
 interface IUserAdmDTO {
-    cod_usuario_adm?: string;
+    cod_usuario_adm?: number;
     nome: string;
     login: string;
     senha?: string;

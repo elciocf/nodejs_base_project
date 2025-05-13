@@ -13,6 +13,8 @@ interface IUsersAdmRepository {
     create(data: IUserAdmDTO): Promise<UserAdm>;
     update(data: IUserAdmDTO): Promise<UserAdm>;
     delete(cod_usuario_adm: number): Promise<void>;
+    findByEmail(email: string): Promise<UserAdm>;
+    findByLogin(login: string): Promise<UserAdm>;
     getByPK(cod_usuario_adm: number): Promise<UserAdm>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
 }
