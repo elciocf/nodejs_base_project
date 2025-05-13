@@ -1,0 +1,8 @@
+
+// signin
+POST {{$dotenv BASEURL}}/admin/signin
+Content-Type: {{$dotenv CONTENTTYPE}}
+
+{"email": "elcio@teste.com.br",
+"senha": "Elcio@123"}
+

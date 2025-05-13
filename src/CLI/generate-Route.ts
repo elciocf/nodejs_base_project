@@ -173,7 +173,7 @@ async function main() {
     }
 
     const httpSubPath = await input({
-        message: "Qual o subpath?",
+        message: "Qual o subpath? <informe com / no inicio>",
         default: `/${auxPath}`,
     });
 
