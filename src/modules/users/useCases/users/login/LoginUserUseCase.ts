@@ -32,7 +32,6 @@ class LoginUserUseCase {
     ) {}
 
     async execute({ email, senha }: IRequest): Promise<IResponse> {
-        // usuario existe
         const user = await this.usersRepository.findByEmail(email);
 
         if (!user) {
@@ -51,6 +50,7 @@ class LoginUserUseCase {
         // TO DO - generate and return refresh token
 
         // gerar jsonwebtoken
+
         const token = sign({}, auth.secret_token, {
             subject: `${user.cod_usuario}`,
             expiresIn: auth.expires_in_token,

@@ -6,6 +6,8 @@ Content-Type: {{$dotenv CONTENTTYPE}}
 {"email": "elcio@teste.com.br",
 "senha": "Elcio@123"}
 
+###
+
 // create
 POST {{$dotenv BASEURL}}/users
 Content-Type: {{$dotenv CONTENTTYPE}}
@@ -15,3 +17,10 @@ Content-Type: {{$dotenv CONTENTTYPE}}
     "email": "elcio@teste.com.br",
     "password": "Elcio@123"
 }
+
+###
+
+// get all
+GET {{$dotenv BASEURL}}/users
+Content-Type: {{$dotenv CONTENTTYPE}}
+Authorization: Bearer {{$dotenv TOKEN}}

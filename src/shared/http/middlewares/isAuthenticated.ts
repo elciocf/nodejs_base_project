@@ -49,7 +49,7 @@ export async function isAuthenticated(
         };
 
         next();
-    } catch {
+    } catch (error) {
         throw new AppError("Token inválido", 401);
     }
 }
