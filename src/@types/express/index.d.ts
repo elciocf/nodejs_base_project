@@ -7,7 +7,6 @@ declare namespace Express {
             cod_tipo_usuario: number | string;
             login: string;
             email: string;
-            avatar: string;
         };
         userAdm: {
             nome: string;
