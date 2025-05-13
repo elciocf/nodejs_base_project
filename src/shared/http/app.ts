@@ -3,9 +3,11 @@ import "@shared/containers/index";
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import "express-async-errors";
+import swaggerUi from "swagger-ui-express";
 
 import { AppError } from "../errors/AppError";
 import { router } from "./routes";
+import { swaggerSpec } from "./swaggerConfig";
 
 const app = express();
 app.use(express.json({ limit: "20mb" }));
@@ -14,6 +16,7 @@ app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.enable("trust proxy");
 app.use(cors());
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(router);
 
 app.use(
