@@ -15,6 +15,20 @@ const options = {
                 description: "Servidor de desenvolvimento",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
     apis: ["./src/shared/http/routes/*.ts"], // Caminho para os arquivos de rotas
 };
