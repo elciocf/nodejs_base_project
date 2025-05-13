@@ -39,12 +39,12 @@ No arquivo `package.json`, você encontrará os seguintes scripts úteis:
     ```
 
 2. Para executar o projeto é necessário que você tenha uma instância do mysql/mariadb
-   Ajuste os arquivos para mirar na sua instância do banco de dados: 
+   Ajustes os arquivos para mirar na sua instância do banco de dados: 
    - knex.ts (na raiz do projeto)
-   - Knex.ts (na pasta /src/configs)
+   - Knex.ts (na pasta /src/configs - Renomear o arquivo knex_example.ts para knex.ts)
 
 3. Defina os hashs de token e refresh_token
-   - auth.ts (na pasta /src/configs)
+   - auth.ts (na pasta /src/configs - Renomer o arquivo auth_example.ts para auth.ts)
 
 3. Execute as migrations:
     ```bash
