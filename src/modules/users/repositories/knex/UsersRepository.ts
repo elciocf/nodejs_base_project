@@ -20,6 +20,7 @@ class UsersRepository implements IUsersRepository {
 
     async findByEmail(email: string): Promise<User> {
         const user = await db("usuarios").where("email", email).first();
+
         return user;
     }
 
@@ -30,6 +31,10 @@ class UsersRepository implements IUsersRepository {
 
     async getByPK(cod: number): Promise<User> {
         const user = await db("usuarios").where("cod_usuario", cod).first();
+        // remove password from user object
+        if (user) {
+            delete user.senha;
+        }
         return user;
     }
 
@@ -39,11 +44,18 @@ class UsersRepository implements IUsersRepository {
         const [countResult] = await db("usuarios").count("* as count");
         const count = Number(countResult.count);
 
-        const data = await db("usuarios")
+        const rawData = await db("usuarios")
             .select("*")
             .orderBy("cod_usuario", order)
             .limit(limit)
             .offset(offset);
+
+        // remove senha from users objects
+        const data = rawData.map((user) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { senha, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        });
 
         const totalPages = Math.ceil(count / limit);
 
