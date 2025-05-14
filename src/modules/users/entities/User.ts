@@ -5,6 +5,7 @@ class User {
     senha: string;
     email: string;
     cod_tipo_usuario: number;
+    avatar: string;
     created_at: Date;
     updated_at: Date;
 
