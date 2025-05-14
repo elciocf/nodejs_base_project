@@ -6,6 +6,7 @@ import "express-async-errors";
 import swaggerUi from "swagger-ui-express";
 
 import { AppError } from "../errors/AppError";
+import { filterFields } from "./middlewares/filterFields";
 import { router } from "./routes";
 import { swaggerSpec } from "./swaggerConfig";
 
@@ -15,6 +16,8 @@ app.use(express.text());
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.enable("trust proxy");
 app.use(cors());
+
+app.use(filterFields);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(router);

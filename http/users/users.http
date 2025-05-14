@@ -32,5 +32,6 @@ Content-Type: {{$dotenv CONTENTTYPE}}
 
 // get all
 GET {{$dotenv BASEURL}}/users
+x-fields: nome,email
 Content-Type: {{$dotenv CONTENTTYPE}}
 Authorization: Bearer {{$dotenv TOKEN}}
