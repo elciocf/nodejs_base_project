@@ -6,17 +6,21 @@ import { IUserTypesRepository } from "../IUserTypesRepository";
 
 class UserTypesRepository implements IUserTypesRepository {
     async create(data: IUserTypeDTO): Promise<UserType> {
-        const [createdUserType] = await db("tipos_usuario")
-            .insert(data)
-            .returning("*");
+        const [pk] = await db("tipos_usuario").insert(data);
+        const createdUserType = await db("tipos_usuario")
+            .where("cod_tipo_usuario", pk)
+            .first();
+
         return createdUserType;
     }
 
     async update(data: IUserTypeDTO): Promise<UserType> {
-        const [updatedUserType] = await db("tipos_usuario")
+        await db("tipos_usuario")
             .where("cod_tipo_usuario", data.cod_tipo_usuario)
-            .update(data)
-            .returning("*");
+            .update(data);
+        const updatedUserType = await db("tipos_usuario")
+            .where("cod_tipo_usuario", data.cod_tipo_usuario)
+            .first();
         return updatedUserType;
     }
 

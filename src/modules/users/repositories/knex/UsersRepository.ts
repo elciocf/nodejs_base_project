@@ -6,15 +6,21 @@ import { IUsersRepository, IList } from "../IUsersRepository";
 
 class UsersRepository implements IUsersRepository {
     async create(data: IUserDTO): Promise<User> {
-        const [createdUser] = await db("usuarios").insert(data).returning("*");
+        const [pk] = await db("usuarios").insert(data).returning("*");
+        const createdUser = await db("usuarios")
+            .where("cod_usuario", pk)
+            .first();
         return createdUser;
     }
 
     async update(data: IUserDTO): Promise<User> {
-        const [updatedUser] = await db("usuarios")
+        await db("usuarios")
             .where("cod_usuario", data.cod_usuario)
             .update(data)
             .returning("*");
+        const updatedUser = await db("usuarios")
+            .where("cod_usuario", data.cod_usuario)
+            .first();
         return updatedUser;
     }
 

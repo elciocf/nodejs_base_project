@@ -6,14 +6,20 @@ import { IRefreshTokensRepository, IList } from "../IRefreshTokensRepository";
 
 class RefreshTokensRepository implements IRefreshTokensRepository {
     async create(data: IRefreshTokenDTO): Promise<RefreshToken> {
-        const created = await db("refresh_tokens").insert(data);
+        const [pk] = await db("refresh_tokens").insert(data);
+        const created = await db("refresh_tokens")
+            .where("cod_token", pk)
+            .first();
         return created;
     }
 
     async update(data: IRefreshTokenDTO): Promise<RefreshToken> {
-        const [updated] = await db("refresh_tokens")
+        await db("refresh_tokens")
             .where("cod_token", data.cod_token)
             .update(data);
+        const updated = await db("refresh_tokens")
+            .where("cod_token", data.cod_token)
+            .first();
         return updated;
     }
 
