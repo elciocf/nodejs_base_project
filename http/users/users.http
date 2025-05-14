@@ -8,6 +8,16 @@ Content-Type: {{$dotenv CONTENTTYPE}}
 
 ###
 
+//refresh token
+POST {{$dotenv BASEURL}}/refresh-token
+Content-Type: {{$dotenv CONTENTTYPE}}
+
+{
+    "refresh_token": "{{$dotenv REFRESHTOKEN}}"
+}
+
+###
+
 // create
 POST {{$dotenv BASEURL}}/users
 Content-Type: {{$dotenv CONTENTTYPE}}
