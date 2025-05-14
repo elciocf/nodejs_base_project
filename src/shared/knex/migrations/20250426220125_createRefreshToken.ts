@@ -7,7 +7,9 @@ export async function up(knex: Knex): Promise<void> {
             .unsigned()
             .notNullable()
             .references("cod_usuario")
-            .inTable("usuarios");
+            .inTable("usuarios")
+            .onDelete("CASCADE")
+            .onUpdate("CASCADE");
         t.text("refresh_token");
         t.dateTime("expira_em");
         t.primary(["cod_token"]);
