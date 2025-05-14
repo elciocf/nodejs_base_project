@@ -6,7 +6,7 @@ import { I{{entityPlural}}Repository, IList } from "../I{{entityPlural}}Reposito
 
 class {{entityPlural}}Repository implements I{{entityPlural}}Repository {
     async create(data: I{{entity}}DTO): Promise<{{entity}}> {
-        const [pk] = await db("{{table}}").insert(data).returning("*");
+        const [pk] = await db("{{table}}").insert(data);
         const created = await db("{{table}}").where("{{entity_pk}}", pk).first();
         return created;
     }
