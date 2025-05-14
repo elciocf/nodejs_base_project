@@ -40,6 +40,7 @@ export async function isAuthenticated(
             throw new AppError("Usuário não existe!", 401);
         }
 
+        // adiciona o usuário no header da requisição
         request.user = {
             nome: user.nome,
             cod_usuario: user.cod_usuario,
