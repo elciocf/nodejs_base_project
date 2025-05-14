@@ -1,6 +1,6 @@
 class RefreshToken {
-    cod_token: string;
-    cod_usuario: string;
+    cod_token: number;
+    cod_usuario: number;
     refresh_token: string;
     expira_em: Date;
     created_at?: Date;

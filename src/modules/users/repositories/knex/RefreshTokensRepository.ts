@@ -24,9 +24,9 @@ class RefreshTokensRepository implements IRefreshTokensRepository {
         await db("refresh_tokens").where("cod_token", cod_token).del();
     }
 
-    async getByPK(cod_token: number): Promise<RefreshToken> {
+    async getByCodUser(cod_user: number): Promise<RefreshToken> {
         const item = await db("refresh_tokens")
-            .where("cod_token", cod_token)
+            .where("cod_usuario", cod_user)
             .first();
         return item;
     }

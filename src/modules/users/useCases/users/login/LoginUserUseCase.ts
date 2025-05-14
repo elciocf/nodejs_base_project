@@ -1,4 +1,5 @@
 import auth from "@configs/auth";
+import { IRefreshTokensRepository } from "@modules/users/repositories/IRefreshTokensRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
@@ -27,6 +28,8 @@ class LoginUserUseCase {
     constructor(
         @inject("UsersRepository")
         private usersRepository: IUsersRepository,
+        @inject("RefreshTokensRepository")
+        private refreshTokensRepository: IRefreshTokensRepository,
         @inject("DateProvider")
         private dateProvider: IDateProvider
     ) {}
@@ -48,12 +51,35 @@ class LoginUserUseCase {
         // TO DO - check if user is active
 
         // TO DO - generate and return refresh token
+        const userRefreshToken =
+            await this.refreshTokensRepository.getByCodUser(user.cod_usuario);
+
+        if (userRefreshToken) {
+            await this.refreshTokensRepository.delete(
+                userRefreshToken.cod_token
+            );
+        }
 
         // gerar jsonwebtoken
-
         const token = sign({}, auth.secret_token, {
             subject: `${user.cod_usuario}`,
             expiresIn: auth.expires_in_token,
+        });
+
+        // gerar refresh token
+        const refresh_token = sign({ email }, auth.secret_refresh_token, {
+            subject: `${user.cod_usuario}`,
+            expiresIn: auth.expires_in_refresh_token,
+        });
+
+        const expires_in = this.dateProvider.addDays(
+            auth.expires_refresh_token_days
+        );
+
+        await this.refreshTokensRepository.create({
+            cod_usuario: user.cod_usuario,
+            refresh_token,
+            expira_em: expires_in,
         });
 
         return {

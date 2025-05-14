@@ -13,7 +13,7 @@ interface IRefreshTokensRepository {
     create(data: IRefreshTokenDTO): Promise<RefreshToken>;
     update(data: IRefreshTokenDTO): Promise<RefreshToken>;
     delete(cod_token: number): Promise<void>;
-    getByPK(cod_token: number): Promise<RefreshToken>;
+    getByCodUser(cod_user: number): Promise<RefreshToken>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
 }
 
