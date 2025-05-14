@@ -2,7 +2,7 @@ import { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable("usuarios_adm", (t) => {
-        t.integer("cod_usuario_adm");
+        t.increments("cod_usuario_adm");
         t.string("nome", 150);
         t.string("login", 50);
         t.string("senha", 255);

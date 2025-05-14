@@ -2,15 +2,16 @@ import { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable("refresh_tokens", (t) => {
-        t.integer("cod_token");
-        t.integer("cod_usuario");
+        t.increments("cod_token");
+        t.integer("cod_usuario")
+            .unsigned()
+            .notNullable()
+            .references("cod_usuario")
+            .inTable("usuarios");
         t.text("refresh_token");
         t.dateTime("expira_em");
         t.primary(["cod_token"]);
         t.timestamps(true, true);
-        t.foreign(["cod_usuario"], "FK_cod_usuario_trefresh_tokens")
-            .references(["cod_usuario"])
-            .inTable("usuarios");
     });
 }
 
