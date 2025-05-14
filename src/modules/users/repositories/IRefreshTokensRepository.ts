@@ -14,6 +14,10 @@ interface IRefreshTokensRepository {
     update(data: IRefreshTokenDTO): Promise<RefreshToken>;
     delete(cod_token: number): Promise<void>;
     getByCodUser(cod_user: number): Promise<RefreshToken>;
+    getByCodUserAndRefreshToken(
+        cod_user: number,
+        refresh_token: string
+    ): Promise<RefreshToken>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
 }
 

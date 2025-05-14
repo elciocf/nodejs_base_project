@@ -16,6 +16,7 @@ interface IRequest {
 interface IResponse {
     token: string;
     expiresInMinutes: number;
+    refresh_token: string;
     user: {
         nome: string;
         cod_usuario: number;
@@ -85,6 +86,7 @@ class LoginUserUseCase {
         return {
             token,
             expiresInMinutes: auth.expires_in_token_minutes,
+            refresh_token,
             user: {
                 nome: user.nome,
                 cod_usuario: user.cod_usuario,

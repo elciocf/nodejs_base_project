@@ -31,6 +31,16 @@ class RefreshTokensRepository implements IRefreshTokensRepository {
         return item;
     }
 
+    async getByCodUserAndRefreshToken(
+        cod_user: number,
+        refresh_token: string
+    ): Promise<RefreshToken> {
+        return db("refresh_tokens")
+            .where("cod_usuario", cod_user)
+            .where("refresh_token", refresh_token)
+            .first();
+    }
+
     async listAll(page: number, limit = 10, order = "asc"): Promise<IList> {
         const offset = (page - 1) * limit;
 
