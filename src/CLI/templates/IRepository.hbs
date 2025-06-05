@@ -15,6 +15,7 @@ interface I{{entityPlural}}Repository {
     delete({{entity_pk}}: number): Promise<void>;
     getByPK({{entity_pk}}: number): Promise<{{entity}}>;
     listAll(page: number, limit?: number, order?: string): Promise<IList>;
+    insertList(list: {{entity}}[]): Promise<void>; 
 }
 
 export { I{{entityPlural}}Repository, IList };

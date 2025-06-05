@@ -37,8 +37,19 @@ async function main() {
         // Verifica se o módulo existe
         const moduleExists = path.join("src/modules", module);
         if (!fs.existsSync(moduleExists)) {
-            console.error(`Módulo ${module} não encontrado.`);
-            return;
+            const createFolder = await select({
+                message: "Criar pasta do módulo?",
+                choices: ["Sim", "Não"],
+            });
+
+            if (createFolder === "Sim") {
+                // Cria o diretório do módulo
+                ensureDir(moduleExists);
+                console.log(`Módulo ${module} criado com sucesso!`);
+            } else {
+                console.error(`Módulo ${module} não encontrado.`);
+                return;
+            }
         }
     }
 

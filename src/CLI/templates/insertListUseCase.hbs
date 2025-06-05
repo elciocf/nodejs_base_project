@@ -1,0 +1,22 @@
+import { inject, injectable } from "tsyringe";
+
+import { {{entity}} } from "@modules/{{module}}/entities/{{entity}}";
+import { I{{entityPlural}}Repository } from "@modules/{{module}}/repositories/I{{entityPlural}}Repository";
+
+interface IRequest {
+    {{entityLower}}: {{entity}}[];
+}
+
+@injectable()
+class {{useCaseNamePascal}}UseCase {
+    constructor(
+        @inject("{{entityPlural}}Repository")
+        private {{entityPluralLower}}Repository: I{{entityPlural}}Repository
+    ) {}
+
+    async execute({ {{entityLower}} }: IRequest): Promise<void> {        
+        await this.{{entityPluralLower}}Repository.insertList({{entityLower}});        
+    }
+}
+
+export { {{useCaseNamePascal}}UseCase };

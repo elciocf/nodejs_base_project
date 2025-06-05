@@ -50,6 +50,10 @@ class {{entityPlural}}Repository implements I{{entityPlural}}Repository {
             totalPages,
         };
     }
+
+    async insertList(list: {{entity}}[]): Promise<void> {
+       await db("{{table}}").insert(list).then(); 
+    }    
 }
 
 export { {{entityPlural}}Repository };

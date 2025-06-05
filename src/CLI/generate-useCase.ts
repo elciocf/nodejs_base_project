@@ -69,7 +69,14 @@ async function main() {
     // escolher qual o padrão de useCase [create, update, delete, list, getbypk]
     const useCase = await select({
         message: "Qual o padrão de useCase?",
-        choices: ["create", "update", "delete", "listAll", "getByPK"],
+        choices: [
+            "create",
+            "update",
+            "delete",
+            "listAll",
+            "getByPK",
+            "insertList",
+        ],
     });
 
     let pkField = "";
