@@ -61,10 +61,33 @@ async function main() {
 
     const entityLower = entity.toLowerCase();
 
+    // Caminho para armazenar os plurais usados
+    const entityPluralsJsonPath = path.resolve(__dirname, "entityPlurals.json");
+    let entityPluralsData: Record<string, string> = {};
+    if (fs.existsSync(entityPluralsJsonPath)) {
+        try {
+            entityPluralsData = JSON.parse(
+                fs.readFileSync(entityPluralsJsonPath, "utf-8")
+            );
+        } catch {
+            entityPluralsData = {};
+        }
+    }
+    const entityPluralKey = `${module}:${entity}`;
+    const defaultEntityPlural =
+        entityPluralsData[entityPluralKey] || `${entity}s`;
+
     const entityPlural = await input({
         message: "Qual o nome da entidade no plural?",
-        default: `${entity}s`,
+        default: defaultEntityPlural,
     });
+
+    // Salva o plural utilizado para a entidade selecionada
+    entityPluralsData[entityPluralKey] = entityPlural;
+    fs.writeFileSync(
+        entityPluralsJsonPath,
+        JSON.stringify(entityPluralsData, null, 2)
+    );
 
     // escolher qual o padrão de useCase [create, update, delete, list, getbypk]
     const useCase = await select({

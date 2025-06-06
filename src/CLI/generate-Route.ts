@@ -91,8 +91,38 @@ async function main() {
         choices: useCases,
     });
 
+    let param = "";
     // const useCaseName = `${upperFirstLetter(useCaseSel)}UseCase`;
     const controllerName = `${upperFirstLetter(useCaseSel)}Controller`;
+
+    // check if controllers uses request.params
+    const controllerFile = path.join(
+        moduleDir,
+        "useCases",
+        entityUseCase,
+        useCaseSel,
+        `${controllerName}.ts`
+    );
+    if (!fs.existsSync(controllerFile)) {
+        console.error(
+            `Controller ${controllerName} não encontrado em ${controllerFile}.`
+        );
+        return;
+    }
+    const controllerContent = fs.readFileSync(controllerFile, "utf-8");
+    if (controllerContent.includes("request.params")) {
+        // obtem o param const { param } = request.params;
+        const paramMatch = controllerContent.match(
+            /const\s*{\s*(\w+)\s*}\s*=\s*request\.params\s*;?/
+        );
+        if (paramMatch) {
+            param = paramMatch[0].split("=")[0].trim();
+            param = param.replace("const ", "").trim();
+            param = param.replace("{", "").trim();
+            param = param.replace("}", "").trim();
+            console.log(`Parâmetro encontrado: ${param}`);
+        }
+    }
 
     const httpMethod = await select({
         message: "Qual HTTP method?",
@@ -133,6 +163,8 @@ async function main() {
             default: `/${entityUseCase.toLowerCase()}`,
         });
 
+        console.log("param", param);
+
         // Adiciona a importação do repositório no index.ts
         const indexFileContent = fs.readFileSync(mainRouteFile, "utf-8");
         // replace the line `const router = Router();
@@ -172,10 +204,37 @@ async function main() {
         auxPath = "";
     }
 
-    const httpSubPath = await input({
+    // Caminho para armazenar subpaths usados
+    const subpathsJsonPath = path.resolve(__dirname, "subpaths.json");
+    let subpathsData: Record<string, string> = {};
+    if (fs.existsSync(subpathsJsonPath)) {
+        try {
+            subpathsData = JSON.parse(
+                fs.readFileSync(subpathsJsonPath, "utf-8")
+            );
+        } catch {
+            subpathsData = {};
+        }
+    }
+    const subpathKey = `${module}`;
+    const defaultSubPath = subpathsData[subpathKey] || `/${auxPath}`;
+
+    let httpSubPath = await input({
         message: "Qual o subpath? <informe com / no inicio>",
-        default: `/${auxPath}`,
+        default: defaultSubPath,
     });
+
+    // check with regex if the subpath starts with /
+    if (!/^\/.*/.test(httpSubPath)) {
+        httpSubPath = `/${httpSubPath}`;
+    }
+
+    // Salva o subpath utilizado para o useCase selecionado
+    subpathsData[subpathKey] = httpSubPath;
+    fs.writeFileSync(subpathsJsonPath, JSON.stringify(subpathsData, null, 2));
+
+    // if param is not empty, add it to the path
+    httpSubPath = param ? `${httpSubPath}/:${param}` : httpSubPath;
 
     // check if // ${entityUseCase} exists in the file
     const regex = new RegExp(`// ${entityUseCase}`, "g");
