@@ -19,6 +19,7 @@ async function main() {
     // 1. Pergunta o módulo
     let module = await input({
         message: "Qual o nome do módulo? <ls - para listar>",
+        default: "ls",
     });
 
     // 2. Se o usuário digitar "ls", lista os módulos

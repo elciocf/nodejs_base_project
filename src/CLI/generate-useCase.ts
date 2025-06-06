@@ -22,6 +22,7 @@ async function main() {
     // 1. Pergunta o módulo
     let module = await input({
         message: "Qual o nome do módulo? <ls - para listar>",
+        default: "ls",
     });
 
     // 2. Se o usuário digitar "ls", lista os módulos
@@ -162,8 +163,14 @@ async function main() {
 
     const useCaseNamePascal = pascalCase(useCaseName);
 
-    let useCaseDir = path.join(moduleDir, "useCases", module.toLowerCase());
-    ensureDir(moduleDir);
+    let useCaseDir = path.join(moduleDir, "useCases");
+    ensureDir(useCaseDir);
+
+    useCaseDir = path.join(moduleDir, "useCases", entityPlural);
+    ensureDir(useCaseDir);
+
+    useCaseDir = path.join(moduleDir, "useCases", entityPlural);
+    ensureDir(useCaseDir);
 
     useCaseDir = path.join(useCaseDir, useCaseName);
     ensureDir(useCaseDir);

@@ -4,9 +4,7 @@ import Handlebars from "handlebars";
 import path from "path";
 
 import {
-    ensureDir,
     lowerFirstLetter,
-    pascalCase,
     runEslintOnFiles,
     writeFileIfNotExists,
     upperFirstLetter,
@@ -23,6 +21,7 @@ async function main() {
     // 1. Pergunta o módulo
     let module = await input({
         message: "Para  qual do módulo? <ls - para listar>",
+        default: "ls",
     });
 
     // 2. Se o usuário digitar "ls", lista os módulos
@@ -70,19 +69,17 @@ async function main() {
             fs.statSync(path.join(useCasesDir, file)).isDirectory()
         );
 
-    console.log("entityUseCases", entityUseCases);
-
-    const entityUseCase: string = await select({
-        message: "Qual a entidade/useCase?",
+    const entity: string = await select({
+        message: "Qual a entidade?",
         choices: entityUseCases,
     });
 
-    // lista useCases do módulo
+    // lista useCases da entidade
     const useCases = fs
-        .readdirSync(path.join(moduleDir, "useCases", entityUseCase))
+        .readdirSync(path.join(moduleDir, "useCases", entity))
         .filter((file) =>
             fs
-                .statSync(path.join(moduleDir, "useCases", entityUseCase, file))
+                .statSync(path.join(moduleDir, "useCases", entity, file))
                 .isDirectory()
         );
 
@@ -99,7 +96,7 @@ async function main() {
     const controllerFile = path.join(
         moduleDir,
         "useCases",
-        entityUseCase,
+        entity,
         useCaseSel,
         `${controllerName}.ts`
     );
@@ -160,10 +157,8 @@ async function main() {
 
         const httpPath = await input({
             message: "Qual o path principal?",
-            default: `/${entityUseCase.toLowerCase()}`,
+            default: `/${entity.toLowerCase()}`,
         });
-
-        console.log("param", param);
 
         // Adiciona a importação do repositório no index.ts
         const indexFileContent = fs.readFileSync(mainRouteFile, "utf-8");
@@ -188,7 +183,7 @@ async function main() {
     const routeFileContent = fs.readFileSync(routesFile, "utf-8");
     let newRouteFileContent = routeFileContent.replace(
         `\nconst ${module}Routes = Router();`,
-        `import { ${controllerName} } from "@modules/${module}/useCases/${entityUseCase}/${useCaseSel}/${controllerName}";\nconst ${module}Routes = Router();`
+        `import { ${controllerName} } from "@modules/${module}/useCases/${entity}/${useCaseSel}/${controllerName}";\nconst ${module}Routes = Router();`
     );
 
     // Declara o controller no arquivo de rotas
@@ -199,7 +194,7 @@ async function main() {
         )} = new ${controllerName}();`
     );
 
-    let auxPath = entityUseCase.toLowerCase();
+    let auxPath = entity.toLowerCase();
     if (auxPath === module.toLowerCase()) {
         auxPath = "";
     }
@@ -237,20 +232,20 @@ async function main() {
     httpSubPath = param ? `${httpSubPath}/:${param}` : httpSubPath;
 
     // check if // ${entityUseCase} exists in the file
-    const regex = new RegExp(`// ${entityUseCase}`, "g");
+    const regex = new RegExp(`// ${entity}`, "g");
     if (!newRouteFileContent.match(regex)) {
         newRouteFileContent = newRouteFileContent.replace(
             `\nexport { ${module}Routes };`,
-            ` ${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
+            ` \n// ${entity}\n ${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
                 controllerName
             )}.handle);\n\nexport { ${module}Routes };`
         );
     } else {
         newRouteFileContent = newRouteFileContent.replace(
-            `// ${entityUseCase}`,
-            `// ${entityUseCase}\n\n${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
+            `// ${entity}`,
+            `// ${entity}\n${module}Routes.${httpMethod}("${httpSubPath}", ${lowerFirstLetter(
                 controllerName
-            )}.handle);\n\nexport { ${module}Routes };`
+            )}.handle);`
         );
     }
 
