@@ -12,5 +12,7 @@ declare namespace Express {
             nome: string;
             cod_usuario_adm: number | string;
         };
+        file?: Express.Multer.File;
+        files?: Express.Multer.File[];
     }
 }
